@@ -1,0 +1,36 @@
+To make authenticatio work for REST api on weblogic
+https://docs.oracle.com/cd/E58500_01/pt854pbh1/eng/pt/tfee/task_ConfiguringOracleWebLogicServertoDisableAuthentication-ad7e32.html#topofpage
+
+	By default, the delivered config.xml file is set to disable the Oracle WebLogic Server's 
+own authentication. No additional configuration is required unless you have changed this authentication setting.
+
+1. To configure Oracle WebLogic Server to disable authentication:
+2. Stop the web server.
+3. Go to the PS_HOME\webserv\web_server\config folder.
+4. Edit the config.xml file by adding the following tag before the closing </security-configuration> tag:
+		<enforce-valid-basic-auth-credentials>false</enforce-valid-basic-auth-credentials>
+
+5. The edited file looks similar to the following with the added line in bold near the end:
+  <security-configuration xmlns:xacml="http://www.bea.com/ns/weblogic/90/security/xacml">
+    <name>peoplesoft1</name>
+    <realm>
+      <sec:authentication-provider xsi:type="wls:default-authenticatorType"/>
+      <sec:authentication-provider xsi:type="wls:default-identity-asserterType">
+        <sec:active-type>AuthenticatedUser</sec:active-type>
+      </sec:authentication-provider>
+      <sec:role-mapper xsi:type="xacml:xacml-role-mapperType"/>
+      <sec:authorizer xsi:type="xacml:xacml-authorizerType"/>
+      <sec:adjudicator xsi:type="wls:default-adjudicatorType"/>
+      <sec:credential-mapper xsi:type="wls:default-credential-mapperType"/>
+      <sec:cert-path-provider xsi:type="wls:web-logic-cert-path-providerType"/>
+      <sec:cert-path-builder>WebLogicCertPathProvider</sec:cert-path-builder>
+      <sec:name>myrealm</sec:name>
+    </realm>
+    <default-realm>myrealm</default-realm>
+    <credential-encrypted>{3DES}XLLC9Wru5qKeMAlvEULruO9LodVs7o3du4WVMtMs/ffmyP16aD4NKEv0va5IxytcWvGRV50mB5dYbzhos9XWNN0Lz4mQoXiy</credential-encrypted>
+    <node-manager-username>system</node-manager-username>
+    <node-manager-password-encrypted>{3DES}c/WblCLbZubUdNamvjN1sw==</node-manager-password-encrypted>
+    <enforce-valid-basic-auth-credentials>false</enforce-valid-basic-auth-credentials>
+</security-configuration>
+6. Save the file.
+7. Restart the web server.

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+								 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+	<beans:import resource="spring-database.xml" />
+
+	<!-- NOTE: If you are working with weblogic, check the src/main/resources/weblogic.notes -->
+	<http use-expressions="true" create-session="stateless">
+		<!-- DCommented out to make method-level security work  
+		<intercept-url pattern="/api/**" access="hasRole('ROLE_ADMIN')" /> 
+		-->
+		<http-basic/>
+	</http>
+	
+	<!--  For method level authorization -->
+	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+		
+	<authentication-manager  id="userservice">
+		
+		<ldap-authentication-provider 
+	 			user-search-base="ou=people" user-search-filter="uid={0}"
+	 			group-search-base="ou=roles" group-search-filter="member={0}" role-prefix="ROLE_" />
+		<!-- 
+		<authentication-provider>
+			<user-service>
+				<user name="sami" password="sami" authorities="ROLE_ADMIN" />
+			</user-service>
+		</authentication-provider>
+		 -->
+	</authentication-manager>
+	
+	<ldap-server id="ldapServer"  url="ldap://localhost:10389/dc=springframework,dc=org"  
+						manager-dn="uid=admin,ou=system"  manager-password="secret" />
+	<ldap-user-service server-ref="ldapServer" user-search-filter="uid={0}" />
+
+</beans:beans>
