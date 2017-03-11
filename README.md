@@ -3,4 +3,4 @@
      Uses spring-security
           1.Method based
           2.Url based
-     Also use "restassured" API to test REST services.
+     Also uses "restassured" API to test REST services.
